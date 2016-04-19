@@ -1,4 +1,4 @@
-###Webshot
+#Webshot
 Small nodejs server for taking screenshots.
 
 Usage:
