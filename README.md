@@ -55,3 +55,6 @@ Replace url with the actual url you want to take a screenshot from.
     </tr>
 </table>
 Parameter(s) with * are required.
+
+## Cluster support
+run node cluster if you need clusters

@@ -4,6 +4,7 @@
   "description": "Take screenshots from webpages",
   "main": "server.js",
   "dependencies": {
+    "cluster": "^0.7.7",
     "crypto": "0.0.3",
     "dns": "^0.2.2",
     "express": "^4.13.4",

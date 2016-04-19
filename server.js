@@ -129,6 +129,6 @@ if (!fs.existsSync(dir)) {
 }
 
 app.listen(8080, function () {
-    console.log('Example WebShot listening on port 8080!');
+    console.log('WebShot listening on port 8080!');
 });
 
