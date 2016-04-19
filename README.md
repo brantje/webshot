@@ -1,5 +1,5 @@
 #Webshot
-Small nodejs server for taking screenshots.
+Small nodejs server for taking screenshots from a webpage.
 
 Usage:
 http://webshot.local:8080?url=[url]
