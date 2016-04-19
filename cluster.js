@@ -20,5 +20,5 @@ if(cluster.isMaster) {
         cluster.fork();
     });
 } else {
-    require('./server.js')
+    require("./server.js")(cluster,process);
 }
