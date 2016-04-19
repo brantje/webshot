@@ -48,5 +48,10 @@ Replace url with the actual url you want to take a screenshot from.
         <td>-</td>
         <td>Bypass the cache</td>
     </tr>
+    <tr>
+        <td>sendlink</td>
+        <td>-</td>
+        <td>Give a link to the generated image. Images requested this way are kept for 24 hours</td>
+    </tr>
 </table>
 Parameter(s) with * are required.
