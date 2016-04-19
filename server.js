@@ -64,8 +64,12 @@ module.exports = function(cluster,workerProcess) {
         var options = {
             url: req.query.url,
             screenSize: {
-                width: req.query.width,
-                height: req.query.height
+                width: parseInt(req.query.width),
+                height: parseInt(req.query.height)
+            },
+            shotSize: {
+                width: parseInt(req.query.width),
+                height: parseInt(req.query.height)
             },
             phanthomConfig: {
                 'ignore-ssl-errors': req.query.ignoresslerrors
