@@ -1,0 +1,28 @@
+{
+  "name": "webshot",
+  "version": "0.0.1",
+  "description": "Take screenshots from webpages",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "webshot": "^0.18.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brantje/webshot.git"
+  },
+  "keywords": [
+    "webpage",
+    "screenshot"
+  ],
+  "author": "Sander Brand",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/brantje/webshot/issues"
+  },
+  "homepage": "https://github.com/brantje/webshot#readme"
+}
