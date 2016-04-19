@@ -7,7 +7,8 @@ var utils = require('./lib/utils');
 var fs = require('fs');
 var dns = require('dns');
 var app = express();
-var fcs = new FileCleanerService(60000); //1 Minute @TODO: Make this a config option
+var config = require('./config/config.js');
+var fcs = new FileCleanerService(config.FileCleanerService.cache);
 app.get('/', function (req, res) {
 
     if (!req.query.url) {
@@ -107,7 +108,7 @@ app.get('/', function (req, res) {
                         });
                     } else {
                         res.json({'link': our_host + '/' + filePath});
-                        fcs.addFile(filePath, 24 * 60 * 60000); //Timeout when sending a link @TODO make this a config option
+                        fcs.addFile(filePath, config.FileCleanerService.link_cache); //Timeout when sending a link
                     }
 
 
@@ -128,7 +129,7 @@ if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
 }
 
-app.listen(8080, function () {
-    console.log('WebShot listening on port 8080!');
+app.listen(process.env.WEB_PORT, function () {
+    console.log('WebShot listening on port %s!',config.web.port);
 });
 

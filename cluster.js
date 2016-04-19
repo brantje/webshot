@@ -20,6 +20,5 @@ if(cluster.isMaster) {
         cluster.fork();
     });
 } else {
-    console.log('Process ' + process.pid + ' is listening to all incoming requests');
     require('./server.js')
 }
