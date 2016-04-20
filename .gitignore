@@ -2,4 +2,4 @@ node_modules/*
 .idea/*
 screenshots/*
 logs/*
-config/config.js
+
