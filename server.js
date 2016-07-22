@@ -15,15 +15,16 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use("/screenshots", express.static(__dirname + '/screenshots'));
+app.use("/tmp", express.static(__dirname + '/tmp'));
 
 app.use(bodyParser.json());
 
 var screenshot = function (req, res) {
     var filetype = 'png';
 
-    if (!req.query.url || !req.body) {
-//        res.json({'error': 'Required param missing'});
-  //      return;
+    if (!req.query.url && !req.body) {
+        res.json({'error': 'Required param missing'});
+        return;
     }
     if (req.query.url && !validUrl.isUri(req.query.url)) {
         res.json({'error': 'Invalid url'});
@@ -88,13 +89,14 @@ var screenshot = function (req, res) {
         userAgent: req.query.userAgent,
         extension: filetype
     };
-    var filename = 'screenshot_' + utils.md5(url + JSON.stringify(options)) + '.'+ filetype;
+    var filename_no_ext = 'screenshot_' + utils.md5(url + JSON.stringify(options));
+    filename = filename_no_ext + '.'+ filetype;
     var filePath = 'screenshots/' + filename;
-
+    var our_host = (req.secure) ? 'https://' + req.headers.host : 'http://' + req.headers.host;
     //If an url is giving, fetch the webpage
     if(req.query.url){
 
-        var our_host = (req.secure) ? 'https://' + req.headers.host : 'http://' + req.headers.host;
+
         if (fs.existsSync(filePath) && req.query.nocache === false) {
             console.log('Request for %s - Found in cache', req.query.url);
             if (!req.query.sendlink) {
@@ -139,15 +141,48 @@ var screenshot = function (req, res) {
 
         });
     }
+
+    if(req.body.html_string){
+
+        var tmp_file = filename_no_ext+ '.html';
+        fs.writeFile('tmp/'+tmp_file, req.body.html_string, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            var tmp_url = our_host + '/tmp/'+ tmp_file;
+            webshot(tmp_url, filePath, options, function (err) {
+                if (!err) {
+
+                    if (!req.query.sendlink) {
+                        res.sendFile(filePath, {root: __dirname}, function (err) {
+                            console.log('Done sending file');
+                            //fs.unlink('screenshots/' + filename);
+                            fcs.addFile(filePath);
+                        });
+                    } else {
+                        res.json({'link': our_host + '/' + filePath});
+                        fcs.addFile(filePath, 24 * 60 * 60000); //Timeout when sending a link @TODO make this a config option
+                    }
+
+                    fs.unlinkSync('tmp/'+tmp_file);
+                } else {
+                    res.json({'error': 'PhantomJS exited with return value 1'});
+                }
+            });
+        });
+    }
 };
 
 app.get('/', screenshot);
+app.post('/', screenshot);
 
 
-var dir = 'screenshots';
+var dirs = ['screenshots','tmp'];
+for(var i =0; i < dirs.length; i++){
+    if (!fs.existsSync(dirs[i])) {
+        fs.mkdirSync(dirs[i]);
+    }
 
-if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
 }
 
 app.listen(8080, function () {
