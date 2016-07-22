@@ -1,3 +1,4 @@
+var path = require('path');
 var webshot = require('webshot');
 var express = require('express');
 var validUrl = require('valid-url');
@@ -6,15 +7,25 @@ var FileCleanerService = require('./lib/fileCleanerService');
 var utils = require('./lib/utils');
 var fs = require('fs');
 var dns = require('dns');
+var bodyParser = require('body-parser');
 var app = express();
 var fcs = new FileCleanerService(60000); //1 Minute @TODO: Make this a config option
-app.get('/', function (req, res) {
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
-    if (!req.query.url) {
-        res.json({'error': 'Required param url missing'});
-        return;
+app.use("/screenshots", express.static(__dirname + '/screenshots'));
+
+app.use(bodyParser.json());
+
+var screenshot = function (req, res) {
+    var filetype = 'png';
+
+    if (!req.query.url || !req.body) {
+//        res.json({'error': 'Required param missing'});
+  //      return;
     }
-    if (!validUrl.isUri(req.query.url)) {
+    if (req.query.url && !validUrl.isUri(req.query.url)) {
         res.json({'error': 'Invalid url'});
         return;
     }
@@ -29,6 +40,10 @@ app.get('/', function (req, res) {
 
     if (req.query.q) {
         req.query.quality = req.query.q;
+    }
+
+    if (req.query.pdf) {
+        filetype = 'pdf';
     }
 
     if (!req.query.height) {
@@ -70,57 +85,64 @@ app.get('/', function (req, res) {
             'ignore-ssl-errors': req.query.ignoresslerrors
         },
         streamType: 'png',
-        userAgent: req.query.userAgent
+        userAgent: req.query.userAgent,
+        extension: filetype
     };
-    var filename = 'screenshot_' + utils.md5(url + JSON.stringify(options)) + '.png';
+    var filename = 'screenshot_' + utils.md5(url + JSON.stringify(options)) + '.'+ filetype;
     var filePath = 'screenshots/' + filename;
-    var our_host = (req.secure) ? 'https://' + req.headers.host : 'http://' + req.headers.host;
-    if (fs.existsSync(filePath) && req.query.nocache === false) {
-        console.log('Request for %s - Found in cache', req.query.url);
-        if (!req.query.sendlink) {
-            res.sendFile(filePath, {root: __dirname}, function (err) {
-                console.log('Done sending  cached file');
-            });
-        } else {
-            res.json({'link': our_host + '/' + filePath})
+
+    //If an url is giving, fetch the webpage
+    if(req.query.url){
+
+        var our_host = (req.secure) ? 'https://' + req.headers.host : 'http://' + req.headers.host;
+        if (fs.existsSync(filePath) && req.query.nocache === false) {
+            console.log('Request for %s - Found in cache', req.query.url);
+            if (!req.query.sendlink) {
+                res.sendFile(filePath, {root: __dirname}, function (err) {
+                    console.log('Done sending  cached file');
+                });
+            } else {
+                res.json({'link': our_host + '/' + filePath})
+            }
+
+            return;
         }
 
-        return;
-    }
+
+        var hostname = url.parse(req.query.url).hostname;
+        dns.resolve4(hostname, function (err, addresses) {
+            if (err) {
+                console.log(err);
+                res.json({'error': 'Hostname not found'});
+            } else {
+                console.log('Taking screenshot from: ' + req.query.url);
+                webshot(req.query.url, filePath, options, function (err) {
+                    if (!err) {
+
+                        if (!req.query.sendlink) {
+                            res.sendFile(filePath, {root: __dirname}, function (err) {
+                                console.log('Done sending file');
+                                //fs.unlink('screenshots/' + filename);
+                                fcs.addFile(filePath);
+                            });
+                        } else {
+                            res.json({'link': our_host + '/' + filePath});
+                            fcs.addFile(filePath, 24 * 60 * 60000); //Timeout when sending a link @TODO make this a config option
+                        }
 
 
-    var hostname = url.parse(req.query.url).hostname;
-    dns.resolve4(hostname, function (err, addresses) {
-        if (err) {
-            console.log(err);
-            res.json({'error': 'Hostname not found'});
-        } else {
-            console.log('Taking screenshot from: ' + req.query.url);
-            webshot(req.query.url, filePath, options, function (err) {
-                if (!err) {
-
-                    if (!req.query.sendlink) {
-                        res.sendFile(filePath, {root: __dirname}, function (err) {
-                            console.log('Done sending file');
-                            //fs.unlink('screenshots/' + filename);
-                            fcs.addFile(filePath);
-                        });
                     } else {
-                        res.json({'link': our_host + '/' + filePath});
-                        fcs.addFile(filePath, 24 * 60 * 60000); //Timeout when sending a link @TODO make this a config option
+                        res.json({'error': 'PhantomJS exited with return value 1'});
                     }
+                });
+            }
 
+        });
+    }
+};
 
-                } else {
-                    res.json({'error': 'PhantomJS exited with return value 1'});
-                }
-            });
-        }
+app.get('/', screenshot);
 
-    });
-
-
-});
 
 var dir = 'screenshots';
 
