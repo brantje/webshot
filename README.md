@@ -55,3 +55,6 @@ Replace url with the actual url you want to take a screenshot from.
     </tr>
 </table>
 Parameter(s) with * are required.
+
+#Rendering html strings
+Do a post with a `html_string` key
