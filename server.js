@@ -59,7 +59,10 @@ module.exports = function (cluster, workerProcess) {
 
     var options = {
       url: '',
-      screenSize: {},
+      screenSize: {
+        width: 1920,
+        height: 1080
+      },
       shotSize: {
         width: 'window',
         height: 'window'

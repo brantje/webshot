@@ -60,4 +60,5 @@ Replace url with the actual url you want to take a screenshot from.
 Parameter(s) with * are required.
 
 #Rendering html strings
-Do a post with a `html_string` key
+Do a post with a `html_string` key.
+You can use the parameters above.
