@@ -25,6 +25,10 @@ Replace url with the actual url you want to take a screenshot from.
         <td>Width of the screen resolution (Default: 1920)</td>
     </tr>
     <tr>
+        <td>filetype</td>
+        <td>Default png. Other options: jpg, jpeg</td>
+    </tr>
+    <tr>
         <td>quality</td>
         <td>JPEG compression quality. A higher number will look better, but creates a larger file.</td>
     </tr>
