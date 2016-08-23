@@ -103,9 +103,13 @@ module.exports = function(cluster,workerProcess) {
             req.query.nocache = false;
         }
 
-        if (!req.query.sendlink) {
-            req.query.sendlink = false;
+        var _sendlink = false;
+        if (req.query.sendlink) {
+            if(req.query.sendlink == 'true' || req.query.sendlink == true) {
+                _sendlink = true;
+            }
         }
+
 
 
         var options = {
@@ -129,7 +133,7 @@ module.exports = function(cluster,workerProcess) {
         if (req.query.url) {
             if (fs.existsSync(filePath) && req.query.nocache === false) {
                 console.log('Request for %s - Found in cache', req.query.url);
-                if (!req.query.sendlink) {
+                if (!_sendlink) {
                     res.sendFile(filePath, {root: __dirname}, function (err) {
                         console.log('Done sending  cached file');
                     });
@@ -151,7 +155,7 @@ module.exports = function(cluster,workerProcess) {
                     webshot(req.query.url, filePath, options, function (err) {
                         if (!err) {
 
-                            if (!req.query.sendlink) {
+                            if (!_sendlink) {
                                 res.sendFile(filePath, {root: __dirname}, function (err) {
                                     console.log('Done sending file');
                                     //fs.unlink('screenshots/' + filename);
@@ -173,7 +177,6 @@ module.exports = function(cluster,workerProcess) {
         }
 
         if (req.body.html_string) {
-
             var tmp_file = filename_no_ext + '.html';
             fs.writeFile('tmp/' + tmp_file, req.body.html_string, function (err) {
                 if (err) {
@@ -183,7 +186,7 @@ module.exports = function(cluster,workerProcess) {
                 webshot(tmp_url, filePath, options, function (err) {
                     if (!err) {
 
-                        if (!req.query.sendlink) {
+                        if (!_sendlink) {
                             res.sendFile(filePath, {root: __dirname}, function (err) {
                                 console.log('Done sending file');
                                 //fs.unlink('screenshots/' + filename);
