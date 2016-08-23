@@ -1,0 +1,17 @@
+.watermark_wrapper {
+    z-index: 999999;
+    position: fixed;
+    top: 0;
+    right: 10px;
+}
+
+.watermark_wrapper .container{
+   /* -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);*/
+    z-index: 999999;
+    color: #fff;
+    font-size: 40px;
+    opacity:0.5;
+    margin-bottom: 20px;
+    text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+}
