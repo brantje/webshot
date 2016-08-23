@@ -33,7 +33,10 @@ module.exports = function (cluster, workerProcess) {
     var filetype = 'png';
 
     var loadFinished = function () {
-        console.log(this.watermark);
+        if(!this.watermark){
+          return;
+        }
+      
         var s = '<div class="container">'+ this.watermark +'</div>'; // HTML string
         var div = document.createElement('div');
         div.className = 'watermark_wrapper';
