@@ -11,7 +11,7 @@ module.exports = function(cluster,workerProcess) {
     var dns = require('dns');
     var bodyParser = require('body-parser');
     var app = express();
-    var fcs = new FileCleanerService(60000); //1 Minute @TODO: Make this a config option
+    var fcs = new FileCleanerService(config.FileCleanerService.cache); //1 Minute
     app.use(bodyParser.urlencoded({
         extended: true
     }));
@@ -21,10 +21,35 @@ module.exports = function(cluster,workerProcess) {
 
     app.use(bodyParser.json());
 
+
+    var isEmpty = function (obj) {
+
+        // null and undefined are "empty"
+        if (obj == null) return true;
+
+        // Assume if it has a length property with a non-zero value
+        // that that property is correct.
+        if (obj.length > 0)    return false;
+        if (obj.length === 0)  return true;
+
+        // If it isn't an object at this point
+        // it is empty, but it can't be anything *but* empty
+        // Is it empty?  Depends on your application.
+        if (typeof obj !== "object") return true;
+
+        // Otherwise, does it have any properties of its own?
+        // Note that this doesn't handle
+        // toString and valueOf enumeration bugs in IE < 9
+        for (var key in obj) {
+            if (hasOwnProperty.call(obj, key)) return false;
+        }
+
+        return true;
+    };
+
     var screenshot = function (req, res) {
         var filetype = 'png';
-
-        if (!req.query.url && !req.body) {
+        if (isEmpty(req.query.url)  && isEmpty(req.body) ) {
             res.json({'error': 'Required param missing'});
             return;
         }
@@ -45,8 +70,13 @@ module.exports = function(cluster,workerProcess) {
             req.query.quality = req.query.q;
         }
 
-        if (req.query.pdf) {
-            filetype = 'pdf';
+        if (req.query.filetype) {
+            var allowed_types = ['png','pdf'];
+            if(allowed_types.indexOf(req.query.filetype) == -1){
+                res.json({'error': 'Invalid file type'});
+            }
+
+            filetype = req.query.filetype;
         }
 
         if (!req.query.height) {
@@ -129,7 +159,7 @@ module.exports = function(cluster,workerProcess) {
                                 });
                             } else {
                                 res.json({'link': our_host + '/' + filePath});
-                                fcs.addFile(filePath, 24 * 60 * 60000); //Timeout when sending a link @TODO make this a config option
+                                fcs.addFile(config.FileCleanerService.link_cache); //Timeout when sending a link @TODO make this a config option
                             }
 
 
@@ -161,7 +191,7 @@ module.exports = function(cluster,workerProcess) {
                             });
                         } else {
                             res.json({'link': our_host + '/' + filePath});
-                            fcs.addFile(filePath, 24 * 60 * 60000); //Timeout when sending a link @TODO make this a config option
+                            fcs.addFile(config.FileCleanerService.link_cache); //Timeout when sending a link
                         }
 
                         fs.unlinkSync('tmp/' + tmp_file);

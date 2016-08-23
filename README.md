@@ -15,7 +15,7 @@ Replace url with the actual url you want to take a screenshot from.
     </tr>
     <tr>
         <td>url*</td>
-        <td>u</td>
+        <td>-</td>
         <td>URL from the website to take the website from</td>
     </tr>
     <tr>
@@ -26,7 +26,7 @@ Replace url with the actual url you want to take a screenshot from.
     <tr>
         <td>width</td>
         <td>w</td>
-        <td>Width of the screen resolution (Default: 1080)</td>
+        <td>Width of the screen resolution (Default: 1920)</td>
     </tr>
     <tr>
         <td>quality</td>
@@ -51,7 +51,15 @@ Replace url with the actual url you want to take a screenshot from.
     <tr>
         <td>sendlink</td>
         <td>-</td>
-        <td>Give a link to the generated image. Images requested this way are kept for 24 hours</td>
+        <td>
+            Give a link to the generated image. Images requested this way are kept for 24 hours.   
+            Example: `http://webshot.local/?url=http://google.com&sendlink=true`
+        </td>
+    </tr>
+    <tr>
+        <td>filetype</td>
+        <td>-</td>
+        <td>Used file type. Default: `png`. Other option(s): 'pdf`</td>
     </tr>
 </table>
 Parameter(s) with * are required.
