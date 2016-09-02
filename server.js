@@ -59,10 +59,10 @@ module.exports = function (cluster, workerProcess) {
 
     var options = {
       url: '',
-      screenSize: {
+      windowSize: {
         width: 1920,
         height: 1080
-      },
+       },
       shotSize: {
         width: 'window',
         height: 'window'
@@ -118,11 +118,11 @@ module.exports = function (cluster, workerProcess) {
     }
 
     if (req.query.screen_height) {
-      options.screenSize.height = req.query.screen_height;
+      options.windowSize.height = req.query.screen_height;
     }
 
     if (req.query.screen_width) {
-      options.screenSize.width = req.query.screen_width;
+      options.windowSize.width = req.query.screen_width;
     }
 
     if (req.query.shot_height) {
