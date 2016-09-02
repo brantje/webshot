@@ -117,12 +117,20 @@ module.exports = function (cluster, workerProcess) {
       options.streamType = req.query.filetype;
     }
 
-    if (req.query.height) {
-      options.screenSize.height = req.query.height;
+    if (req.query.screen_height) {
+      options.screenSize.height = req.query.screen_height;
     }
 
-    if (req.query.width) {
-      options.screenSize.width = req.query.width;
+    if (req.query.screen_width) {
+      options.screenSize.width = req.query.screen_width;
+    }
+
+    if (req.query.shot_height) {
+      options.shotSize.height = req.query.shot_height;
+    }
+
+    if (req.query.shot_width) {
+      options.shotSize.width = req.query.shot_width;
     }
 
     if (req.query.quality) {

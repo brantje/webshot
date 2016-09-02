@@ -17,12 +17,28 @@ Replace url with the actual url you want to take a screenshot from.
         <td>URL from the website to take the website from</td>
     </tr>
     <tr>
-        <td>height</td>
+        <td>screen_height</td>
         <td>Height of the screen resolution (Default: 1080)</td>
     </tr>
     <tr>
-        <td>width</td>
+        <td>screen_width</td>
         <td>Width of the screen resolution (Default: 1920)</td>
+    </tr>
+    <tr>
+        <td>shot_height</td>
+        <td>The area of the page document, starting at the upper left corner, to render. Possible values are 'screen', 'all', and a number defining a pixel length. 
+            
+            'window' causes the length to be set to the length of the window (i.e. the shot displays what is initially visible within the browser window). 
+            
+            'all' causes the length to be set to the length of the document along the given dimension.</td>
+    </tr>
+    <tr>
+        <td>shot_width</td>
+        <td>The area of the page document, starting at the upper left corner, to render. Possible values are 'screen', 'all', and a number defining a pixel length. 
+            
+            'window' causes the length to be set to the length of the window (i.e. the shot displays what is initially visible within the browser window). 
+            
+            'all' causes the length to be set to the length of the document along the given dimension.)</td>
     </tr>
     <tr>
         <td>filetype</td>
